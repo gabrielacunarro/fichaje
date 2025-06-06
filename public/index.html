@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fichaje</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 0.8rem;
+      font-size: 1.1rem;
+      margin-top: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    #mensaje {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Fichaje</h1>
+    <form id="fichaje-form">
+      <label for="tipo">Seleccioná una opción:</label>
+      <select id="tipo" required>
+        <option value="">-- Elegí una opción --</option>
+        <option value="checkin">Check In</option>
+        <option value="checkout">Check Out</option>
+      </select>
+
+      <button type="submit">Fichar</button>
+    </form>
+    <div id="mensaje"></div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    const email = localStorage.getItem('email');
+    const mensaje = document.getElementById('mensaje');
+
+    if (!token || !email) {
+      alert('Debes iniciar sesión primero');
+      window.location.href = '/login.html';
+    }
+
+    const API_BASE = '/api';
+
+    document.getElementById('fichaje-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const tipo = document.getElementById('tipo').value;
+
+      if (!tipo) {
+        mensaje.textContent = 'Por favor, seleccioná una opción.';
+        mensaje.style.color = 'red';
+        return;
+      }
+
+      if (!navigator.geolocation) {
+        mensaje.textContent = 'Geolocalización no disponible';
+        mensaje.style.color = 'red';
+        return;
+      }
+
+      mensaje.textContent = 'Obteniendo ubicación...';
+      mensaje.style.color = 'black';
+
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        try {
+          const res = await fetch(`${API_BASE}/fichaje`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              usuarioId: email,
+              tipo,
+              lat,
+              lng
+            }),
+          });
+
+          const data = await res.json();
+
+          if (res.ok && data.success) {
+            mensaje.textContent = data.message + (data.horas ? ` (${data.horas.toFixed(2)} hs)` : '');
+            mensaje.style.color = 'green';
+          } else {
+            mensaje.textContent = data.message || 'Error al fichar';
+            mensaje.style.color = 'red';
+          }
+        } catch (err) {
+          mensaje.textContent = 'Error de conexión al servidor';
+          mensaje.style.color = 'red';
+        }
+      }, (err) => {
+        mensaje.textContent = 'No se pudo obtener la ubicación: ' + err.message;
+        mensaje.style.color = 'red';
+      });
+    });
+  </script>
+</body>
+</html>
+
