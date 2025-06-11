@@ -73,11 +73,11 @@
     const mensaje = document.getElementById('mensaje');
 
     if (!token || !email) {
-      mensaje.textContent = 'Debes iniciar sesión primero';
+      mensaje.textContent = 'Debes iniciar sesión primero...redirigiendo';
       mensaje.style.color = 'red';
       setTimeout(() => {
         window.location.href = '/login.html';
-      }, 2000);
+      }, 4000);
     }
 
     const API_BASE = '/api';
