@@ -58,7 +58,7 @@ exports.recuperarPassword = async (req, res) => {
       subject: 'Recuperación de contraseña',
       text: `Recibiste este correo porque solicitaste restablecer tu contraseña.\n\n` +
             `Ingresa al siguiente enlace para continuar:\n\n` +
-            `http://localhost:3000/reset.html?token=${token}\n\n` +
+            `http://localhost:5000/reset.html?token=${token}\n\n` +
             `Si no solicitaste esto, ignora este correo.\n`
     };
 

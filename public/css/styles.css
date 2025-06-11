@@ -6,27 +6,23 @@
   font-family: 'Arial', sans-serif;
 }
 
-/* Estilos generales del body */
 body {
-  background-color: #f4f4f9;
+  background: #f4f4f9;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  margin: 0;
 }
 
-/* Contenedor principal */
 .container {
-  background-color: #fff;
+  background: white;
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  width: 100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   max-width: 400px;
+  width: 100%;
 }
 
-/* Títulos */
 h1 {
   text-align: center;
   margin-bottom: 1.5rem;
@@ -34,114 +30,76 @@ h1 {
   color: #333;
 }
 
-/* Estilos de los formularios */
-form {
-  display: flex;
-  flex-direction: column;
-}
-
-label {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  color: #555;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"] {
-  padding: 0.8rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.3s;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus {
-  border-color: #007bff;
-}
-
-/* Estilos del botón */
+label,
+input,
 button {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+input {
   padding: 0.8rem;
-  background-color: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
   font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+input::placeholder {
+  color: #aaa;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem; /* Podés ajustar */
+  font-size: 1rem;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  margin-top: 1.5rem; /* Separación arriba */
 }
 
 button:hover {
-  background-color: #0056b3;
+  background: #0056b3;
 }
 
-/* Estilos del icono de ojo */
-.password-container {
-  position: relative;
-}
-
-.password-container input {
+/* Para que el select tenga un estilo similar y tamaño igual al botón */
+select {
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
   width: 100%;
-  padding-right: 30px; /* Espacio para el icono */
-}
-
-.password-container i {
-  position: absolute;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
+  background-color: white;
+  color: #333;
   cursor: pointer;
-  color: #888;
 }
 
-/* Estilos del mensaje */
+
 #mensaje {
   text-align: center;
+  color: red;
+}
+
+/* Links debajo del formulario */
+.links {
+  text-align: center;
   margin-top: 1rem;
-  font-size: 1rem;
-  color: #ff0000;
+  font-size: 0.9rem;
 }
 
-.botones-fichaje {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 1.5rem;
+.links a {
+  color: #007bff;
+  text-decoration: none;
+  margin: 0 0.5rem;
 }
 
-.boton-fichaje {
-  padding: 0.8rem;
-  font-size: 1.1rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s;
+.links a:hover {
+  text-decoration: underline;
+  color: #0056b3;
 }
 
-.boton-checkin {
-  background-color: #28a745; /* verde */
-  color: white;
-}
-
-.boton-checkin:hover {
-  background-color: #218838;
-}
-
-.boton-checkout {
-  background-color: #dc3545; /* rojo */
-  color: white;
-}
-
-.boton-checkout:hover {
-  background-color: #c82333;
-}
 
 a {
   color: #007bff;
@@ -153,3 +111,25 @@ a:hover {
   text-decoration: underline;
   color: #0056b3;
 }
+
+/* VISTA PASSWORD*/
+
+  .input-con-ojo {
+    position: relative;
+    width: 100%;
+  }
+  .input-con-ojo input {
+    width: 100%;
+    padding-right: 2.5rem; /* espacio para el icono */
+    box-sizing: border-box;
+  }
+  .input-con-ojo .ojo {
+    position: absolute;
+    right: 0.7rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    user-select: none;
+    font-size: 1.2rem;
+    color: #666;
+  }
