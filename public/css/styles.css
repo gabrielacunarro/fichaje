@@ -8,10 +8,10 @@
 
 body {
   background: #f4f4f9;
+  min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
+  padding: 2rem 1rem; /* espacio para móvil */
 }
 
 .container {
@@ -21,7 +21,16 @@ body {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   max-width: 400px;
   width: 100%;
+  align-self: center; /* centra vertical SOLO si hay espacio */
 }
+
+/* Opcional para pantallas MUY chicas */
+@media (max-height: 500px) {
+  body {
+    align-items: flex-start; /* no centrar vertical en pantallas bajitas */
+  }
+}
+
 
 h1 {
   text-align: center;
