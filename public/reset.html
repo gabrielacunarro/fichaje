@@ -1,0 +1,44 @@
+<script>
+  const form = document.getElementById('reset-form');
+  const mensaje = document.getElementById('mensaje');
+  const params = new URLSearchParams(window.location.search);
+  const token = params.get('token');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    mensaje.textContent = '';
+    mensaje.style.color = '';
+
+    const password = document.getElementById('password').value.trim();
+
+    if (!token) {
+      mensaje.textContent = 'Token inválido.';
+      mensaje.style.color = 'red';
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/auth/reset/' + token, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        mensaje.textContent = data.message || 'Contraseña restablecida correctamente.';
+        mensaje.style.color = 'green';
+        setTimeout(() => {
+          window.location.href = '/login.html';  // Redirigir a login
+        }, 3000);
+      } else {
+        mensaje.textContent = data.message || 'Error al restablecer la contraseña.';
+        mensaje.style.color = 'red';
+      }
+    } catch (err) {
+      mensaje.textContent = 'Error de conexión.';
+      mensaje.style.color = 'red';
+    }
+  });
+</script>
