@@ -73,8 +73,11 @@
     const mensaje = document.getElementById('mensaje');
 
     if (!token || !email) {
-      alert('Debes iniciar sesión primero');
-      window.location.href = '/login.html';
+      mensaje.textContent = 'Debes iniciar sesión primero';
+      mensaje.style.color = 'red';
+      setTimeout(() => {
+        window.location.href = '/login.html';
+      }, 2000);
     }
 
     const API_BASE = '/api';
@@ -139,4 +142,3 @@
   </script>
 </body>
 </html>
-

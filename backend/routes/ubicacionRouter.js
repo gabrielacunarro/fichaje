@@ -7,7 +7,7 @@ router.post('/', async (req, res) => {
   const { nombre, lat, lng } = req.body;
 
   if (!nombre || lat === undefined || lng === undefined) {
-    return res.status(400).json({ error: 'Faltan campos requeridos' });
+    return res.status(400).json({ error: 'Faltan datos requeridos' });
   }
 
   try {
