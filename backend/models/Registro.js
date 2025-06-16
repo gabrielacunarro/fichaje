@@ -11,4 +11,9 @@ const registroSchema = new mongoose.Schema({
   observaciones: String
 });
 
-module.exports = mongoose.model('Registro', registroSchema);
+// Usamos la base de datos "prod"
+const prodDB = mongoose.connection.useDb('prod');
+
+const Registro = prodDB.model('Registro', registroSchema, 'registros');
+
+module.exports = Registro;

@@ -6,4 +6,9 @@ const ubicacionSchema = new mongoose.Schema({
   lng: Number
 });
 
-module.exports = mongoose.model('Ubicacion', ubicacionSchema);
+// Usamos la base de datos "prod"
+const prodDB = mongoose.connection.useDb('prod');
+
+const Ubicacion = prodDB.model('Ubicacion', ubicacionSchema, 'ubicaciones');
+
+module.exports = Ubicacion;
