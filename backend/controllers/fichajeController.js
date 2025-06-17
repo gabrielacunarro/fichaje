@@ -1,5 +1,6 @@
 const Fichaje = require('../models/Fichaje');
 const Ubicacion = require('../models/Ubicacion');
+const Jornada = require('../models/Jornada'); // <-- import Jornada
 
 // Verifica si la ubicación está dentro de las ubicaciones permitidas
 const esUbicacionValida = async (lat, lng) => {
@@ -62,6 +63,7 @@ exports.fichar = async (req, res) => {
       // Calcular horas trabajadas
       const horas = (Date.now() - new Date(ultimoFichaje.createdAt)) / 1000 / 60 / 60;
 
+      // Guardar el checkout en fichajes
       await Fichaje.create({
         usuarioId,
         tipo,
@@ -69,7 +71,17 @@ exports.fichar = async (req, res) => {
         horasTrabajadas: horas
       });
 
-      return res.json({ success: true, message: 'Check Out registrado', horas });
+      // Guardar la jornada
+      const nuevaJornada = new Jornada({
+        usuarioId,
+        fecha: new Date(),
+        horasTrabajadas: horas,
+        ubicacion: { lat, lng }
+      });
+
+      await nuevaJornada.save();
+
+      return res.json({ success: true, message: 'Check Out registrado y jornada guardada', horas });
     }
 
     res.status(400).json({ success: false, message: 'Tipo inválido' });

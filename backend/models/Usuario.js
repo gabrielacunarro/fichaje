@@ -8,9 +8,5 @@ const usuarioSchema = new mongoose.Schema({
   resetPasswordExpires: Date
 }, { timestamps: true });
 
-// Usamos la base de datos "prod"
-const prodDB = mongoose.connection.useDb('prod');
 
-const Usuario = prodDB.model('Usuario', usuarioSchema, 'usuarios');
-
-module.exports = Usuario;
+module.exports = mongoose.model('Usuario', usuarioSchema)

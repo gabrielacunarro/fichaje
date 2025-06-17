@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const registroSchema = new mongoose.Schema({
+const jornadaSchema = new mongoose.Schema({
   usuarioId: { type: String, required: true },
   fecha: { type: Date, required: true },
   horasTrabajadas: { type: Number, required: true },
@@ -11,4 +11,5 @@ const registroSchema = new mongoose.Schema({
   observaciones: String
 });
 
-module.exports = mongoose.model('Registro', registroSchema)
+
+module.exports = mongoose.model('Jornada', jornadaSchema)

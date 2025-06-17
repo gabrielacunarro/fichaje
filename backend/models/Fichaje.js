@@ -10,11 +10,6 @@ const fichajeSchema = new mongoose.Schema({
   horasTrabajadas: Number,
 }, { timestamps: true });
 
-// Aquí usamos useDb para seleccionar la base "prod"
-const prodDB = mongoose.connection.useDb('prod');
 
-// Creamos el modelo en la base "prod", colección "fichajes"
-const Fichaje = prodDB.model('Fichaje', fichajeSchema, 'fichajes');
-
-module.exports = Fichaje;
+module.exports = mongoose.model('Fichaje', fichajeSchema);
 

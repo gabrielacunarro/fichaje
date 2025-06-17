@@ -1,99 +1,110 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Login</title>
-  <link rel="stylesheet" href="./css/styles.css" />
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <link rel="stylesheet" href="./css/styles.css" />
+  </head>
 
-<body>
-  <div class="container">
-    <h1>Fichaje</h1>
-    <form id="fichaje-form">
-      <label for="tipo">Seleccioná una opción:</label>
-      <select id="tipo" required>
-        <option value="">-- Elegí una opción --</option>
-        <option value="checkin">Check In</option>
-        <option value="checkout">Check Out</option>
-      </select>
+  <body>
+    <div class="container">
+      <h1>Fichaje</h1>
+      <form id="fichaje-form">
+        <label for="tipo">Seleccioná una opción:</label>
+        <select id="tipo" required>
+          <option value="">-- Elegí una opción --</option>
+          <option value="checkin">Check In</option>
+          <option value="checkout">Check Out</option>
+        </select>
 
-      <button type="submit">Fichar</button>
-    </form>
-    <div id="mensaje"></div>
-  </div>
+        <button type="submit">Fichar</button>
+      </form>
+      <div id="mensaje"></div>
+    </div>
 
-  <script>
-    const token = localStorage.getItem('token');
-    const email = localStorage.getItem('email');
-    const mensaje = document.getElementById('mensaje');
+    <script>
+      const token = localStorage.getItem("token");
+      const email = localStorage.getItem("email");
+      const mensaje = document.getElementById("mensaje");
 
-    if (!token || !email) {
-      mensaje.textContent = 'Debes iniciar sesión primero...redirigiendo';
-      mensaje.style.color = 'red';
-      setTimeout(() => {
-        window.location.href = '/login.html';
-      }, 4000);
-    }
-
-    const API_BASE = '/api';
-
-    document.getElementById('fichaje-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const tipo = document.getElementById('tipo').value;
-
-      if (!tipo) {
-        mensaje.textContent = 'Por favor, seleccioná una opción.';
-        mensaje.style.color = 'red';
-        return;
+      if (!token || !email) {
+        mensaje.textContent = "Debes iniciar sesión primero...redirigiendo";
+        mensaje.style.color = "red";
+        setTimeout(() => {
+          window.location.href = "/login.html";
+        }, 4000);
       }
 
-      if (!navigator.geolocation) {
-        mensaje.textContent = 'Geolocalización no disponible';
-        mensaje.style.color = 'red';
-        return;
-      }
+      const API_BASE = "/api";
 
-      mensaje.textContent = 'Obteniendo ubicación...';
-      mensaje.style.color = 'black';
+      document
+        .getElementById("fichaje-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-      navigator.geolocation.getCurrentPosition(async (pos) => {
-        const lat = pos.coords.latitude;
-        const lng = pos.coords.longitude;
+          const tipo = document.getElementById("tipo").value;
 
-        try {
-          const res = await fetch(`${API_BASE}/fichaje`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              usuarioId: email,
-              tipo,
-              lat,
-              lng
-            }),
-          });
-
-          const data = await res.json();
-
-          if (res.ok && data.success) {
-            mensaje.textContent = data.message + (data.horas ? ` (${data.horas.toFixed(2)} hs)` : '');
-            mensaje.style.color = 'green';
-          } else {
-            mensaje.textContent = data.message || 'Error al fichar';
-            mensaje.style.color = 'red';
+          if (!tipo) {
+            mensaje.textContent = "Por favor, seleccioná una opción.";
+            mensaje.style.color = "red";
+            return;
           }
-        } catch (err) {
-          mensaje.textContent = 'Error de conexión al servidor';
-          mensaje.style.color = 'red';
-        }
-      }, (err) => {
-        mensaje.textContent = 'No se pudo obtener la ubicación: ' + err.message;
-        mensaje.style.color = 'red';
-      });
-    });
-  </script>
-</body>
+
+          if (!navigator.geolocation) {
+            mensaje.textContent = "Geolocalización no disponible";
+            mensaje.style.color = "red";
+            return;
+          }
+
+          mensaje.textContent = "Obteniendo ubicación...";
+          mensaje.style.color = "black";
+
+          navigator.geolocation.getCurrentPosition(
+            async (pos) => {
+              const lat = pos.coords.latitude;
+              const lng = pos.coords.longitude;
+
+              try {
+                const res = await fetch(`${API_BASE}/fichaje`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({
+                    usuarioId: email,
+                    tipo,
+                    lat,
+                    lng,
+                  }),
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                  mensaje.textContent =
+                    data.message +
+                    (data.horas ? ` (${data.horas.toFixed(2)} hs)` : "");
+                  mensaje.style.color = "green";
+                } else {
+                  mensaje.textContent = data.message || "Error al fichar";
+                  mensaje.style.color = "red";
+                }
+              } catch (err) {
+                mensaje.textContent = "Error de conexión al servidor";
+                mensaje.style.color = "red";
+              }
+            },
+            (err) => {
+              mensaje.textContent =
+                "No se pudo obtener la ubicación: " + err.message;
+              mensaje.style.color = "red";
+            }
+          );
+        });
+    </script>
+    <footer class="footer">
+      <p>© 2025 Todos los derechos reservados.</p>
+    </footer>
+  </body>
 </html>
