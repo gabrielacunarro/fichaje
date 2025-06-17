@@ -5,7 +5,7 @@ const Jornada = require('../models/Jornada'); // <-- import Jornada
 // Verifica si la ubicación está dentro de las ubicaciones permitidas
 const esUbicacionValida = async (lat, lng) => {
   const ubicaciones = await Ubicacion.find();
-  const umbral = 0.0005; // ~50m en coordenadas GPS
+  const umbral = 0.001; // ~100m en coordenadas GPS
 
   return ubicaciones.some(u => (
     Math.abs(u.lat - lat) < umbral && Math.abs(u.lng - lng) < umbral

@@ -35,8 +35,6 @@
         }, 4000);
       }
 
-      const API_BASE = "/api";
-
       document
         .getElementById("fichaje-form")
         .addEventListener("submit", async (e) => {
@@ -65,7 +63,7 @@
               const lng = pos.coords.longitude;
 
               try {
-                const res = await fetch(`${API_BASE}/fichaje`, {
+                const res = await fetch("/api/fichaje", {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",

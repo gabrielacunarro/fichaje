@@ -1,17 +1,21 @@
 const API_BASE = '/api';
 
-export async function enviarFichaje(tipo, coords, token) {
+export async function enviarFichaje(tipo, coords, token, usuarioId) {
   const res = await fetch(`${API_BASE}/fichaje`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`,
     },
-    body: JSON.stringify({ tipo, lat: coords.lat, lng: coords.lng }),
+    body: JSON.stringify({ 
+      tipo, 
+      lat: coords.lat, 
+      lng: coords.lng,
+      usuarioId, // agregado
+    }),
   });
   return res.json();
 }
-
 
 
 export async function registrarUsuario(datos) {
