@@ -18,6 +18,14 @@ exports.login = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Usuario o contraseña incorrectas.' });
     }
 
+    // Guardar datos en sesión para uso en rutas protegidas
+    req.session.user = {
+      id: usuario._id,
+      email: usuario.email,
+      nombre: usuario.nombre,
+    };
+
+    // Crear token JWT (si usas token también)
     const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 
     res.json({ success: true, token });
@@ -26,6 +34,7 @@ exports.login = async (req, res) => {
     res.status(500).json({ success: false, message: 'Error del servidor' });
   }
 };
+
 
 //  RECUPERAR CONTRASEÑA
 exports.recuperarPassword = async (req, res) => {

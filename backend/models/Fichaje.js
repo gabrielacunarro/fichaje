@@ -4,6 +4,7 @@ const fichajeSchema = new mongoose.Schema({
   usuarioId: { type: String, required: true },
   tipo: { type: String, enum: ['checkin', 'checkout'], required: true },
   ubicacion: {
+    nombre: { type: String },
     lat: Number,
     lng: Number
   },

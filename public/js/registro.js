@@ -16,7 +16,7 @@ document.getElementById('registro-form').addEventListener('submit', async (e) =>
   }
 
   try {
-    await registrarUsuario({ nombre, email, password });
+    await registrarUsuario({ nombre, email, password, confirmPassword });
     mensaje.textContent = 'Usuario registrado con éxito.';
     mensaje.style.color = 'green';
   } catch (error) {

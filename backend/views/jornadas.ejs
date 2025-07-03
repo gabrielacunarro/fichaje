@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Jornadas laborales</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+  <div class="jornadas-wrapper">
+    <div class="jornadas-container">
+      <h1 class="titulo-jornadas">Jornadas laborales</h1>
+
+      <!-- Buscador -->
+      <form id="form-busqueda">
+        <input
+          type="text"
+          id="busqueda-nombre"
+          placeholder="Buscar por nombre"
+        />
+        <button type="submit" class="btn" aria-label="Buscar">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 16 16"
+            width="18"
+            height="18"
+            fill="currentColor"
+          >
+            <path
+              d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.11a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"
+            />
+          </svg>
+        </button>
+      </form>
+
+      <!-- Tabla -->
+      <table id="tabla-jornadas">
+        <thead>
+          <tr>
+            <th>Empleado</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+            <th>Horas trabajadas</th>
+            <th>Ubicación</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Aquí se insertarán las filas dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>© 2025 Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="/js/jornadas.js"></script>
+</body>
+</html>

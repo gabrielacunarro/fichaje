@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Login</title>
-    <link rel="stylesheet" href="./css/styles.css" />
+    <link rel="stylesheet" href="/css/styles.css" />
   </head>
 
   <body>
@@ -33,10 +33,10 @@
       <div class="links">
         <p>
           ¿No tienes cuenta?
-          <a href="/registro.html">Regístrate aquí</a>
+          <a href="/registro">Regístrate aquí</a>
         </p>
         <p>
-          <a href="/forgot.html">¿Olvidaste tu contraseña?</a>
+          <a href="/forgot">¿Olvidaste tu contraseña?</a>
         </p>
       </div>
     </div>
@@ -64,12 +64,14 @@
           if (res.ok) {
             localStorage.setItem("token", data.token);
             localStorage.setItem("email", email);
-            window.location.href = "/index.html";
+            window.location.href = "/dashboard"; 
           } else {
             mensaje.textContent = data.message || "Error al iniciar sesión";
+            mensaje.style.color = "red";
           }
         } catch (error) {
           mensaje.textContent = "Error de conexión al servidor";
+          mensaje.style.color = "red";
         }
       });
     </script>

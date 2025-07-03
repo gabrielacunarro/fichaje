@@ -5,6 +5,7 @@ const registroSchema = new mongoose.Schema({
   fecha: { type: Date, required: true },
   horasTrabajadas: { type: Number, required: true },
   ubicacion: {
+    nombre: { type: String },
     lat: Number,
     lng: Number
   },

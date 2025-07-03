@@ -2,10 +2,15 @@ const Usuario = require('../models/Usuario');
 const bcrypt = require('bcryptjs');
 
 const registrarUsuario = async (req, res) => {
-      console.log('Datos recibidos en req.body:', req.body);
-  const { nombre, email, password } = req.body;
+
+  const { nombre, email, password, confirmPassword } = req.body;
 
   try {
+    // Verificar si las contraseñas coinciden
+    if (password !== confirmPassword) {
+      return res.status(400).json({ success: false, message: 'Las contraseñas no coinciden' });
+    }
+
     // Verificar si el usuario ya existe
     const existeUsuario = await Usuario.findOne({ email });
     if (existeUsuario) {

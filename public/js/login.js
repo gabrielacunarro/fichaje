@@ -1,9 +1,11 @@
-// public/login.js
 document.getElementById('login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('email').value.trim();
   const password = document.getElementById('password').value;
   const mensaje = document.getElementById('mensaje');
+
+  // Lista de admins (igual que en backend)
+  const admins = ['gabiicai17@gmail.com', 'aleelcharobolso1899@hotmail.com'];
 
   try {
     const res = await fetch('/api/auth/login', {
@@ -16,8 +18,14 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
 
     if (res.ok && data.token) {
       localStorage.setItem('token', data.token);
-      localStorage.setItem('email', email); // Opcional para auto completar
-      window.location.href = '/index.html'; // Redirigir al fichaje
+      localStorage.setItem('email', email); // Opcional para autocompletar
+
+      if (admins.includes(email.toLowerCase())) {
+        window.location.href = '/dashboard';  // Admin va al dashboard
+      } else {
+        window.location.href = '/index.html'; // Usuario normal va al fichaje
+      }
+
     } else {
       mensaje.textContent = data.message || 'Error al iniciar sesión';
       mensaje.style.color = 'red';
@@ -27,3 +35,4 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
     mensaje.style.color = 'red';
   }
 });
+

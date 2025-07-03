@@ -10,10 +10,13 @@ body {
   background: #f4f4f9;
   min-height: 100vh;
   display: flex;
-  justify-content: center;
-  padding: 2rem 1rem; /* espacio para móvil */
+  justify-content: center;  /* horizontal */
+  align-items: center;      /* vertical */
+  padding: 2rem 1rem;
 }
 
+
+/* Estilos generales para formularios y páginas que no sean dashboard */
 .container {
   background: white;
   padding: 2rem;
@@ -30,7 +33,6 @@ body {
     align-items: flex-start; /* no centrar vertical en pantallas bajitas */
   }
 }
-
 
 h1 {
   text-align: center;
@@ -85,7 +87,6 @@ select {
   cursor: pointer;
 }
 
-
 #mensaje {
   text-align: center;
   color: red;
@@ -109,7 +110,6 @@ select {
   color: #0056b3;
 }
 
-
 a {
   color: #007bff;
   text-decoration: none;
@@ -121,30 +121,181 @@ a:hover {
   color: #0056b3;
 }
 
-/* VISTA PASSWORD*/
+/* VISTA PASSWORD */
 
-  .input-con-ojo {
-    position: relative;
-    width: 100%;
-  }
-  .input-con-ojo input {
-    width: 100%;
-    padding-right: 2.5rem; /* espacio para el icono */
-    box-sizing: border-box;
-  }
-  .input-con-ojo .ojo {
-    position: absolute;
-    right: 0.7rem;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    user-select: none;
-    font-size: 1.2rem;
-    color: #000000;
-  }
-  .forgot {
+.input-con-ojo {
+  position: relative;
+  width: 100%;
+}
+.input-con-ojo input {
+  width: 100%;
+  padding-right: 2.5rem; /* espacio para el icono */
+  box-sizing: border-box;
+}
+.input-con-ojo .ojo {
+  position: absolute;
+  right: 0.7rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+  font-size: 1.2rem;
+  color: #000000;
+}
+.forgot {
   text-align: center;
 }
+
+/* --- Estilos ESPECÍFICOS para DASHBOARD --- */
+.dashboard .container {
+  text-align: center;
+  max-width: 400px; /* opcional */
+  margin: 0 auto;
+}
+
+.dashboard .btn {
+  display: inline-block;
+  background: #007bff;
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  /* margin eliminado para evitar choque con btn-group */
+}
+
+.dashboard .btn:hover {
+  background: #0056b3;
+  color: white;
+}
+
+/* Para separar un poco el párrafo dentro del dashboard */
+.dashboard .container p {
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+}
+
+/* Grupo vertical de botones centrados */
+.dashboard .btn-group {
+  display: flex;
+  flex-direction: column; /* vertical */
+  align-items: center; /* centrar horizontalmente */
+  gap: 15px; /* espacio vertical entre botones */
+  margin-top: 1rem;
+  width: 100%; /* que el contenedor ocupe todo el ancho posible */
+  max-width: 300px; /* opcional para limitar ancho */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dashboard .btn-group .btn {
+  width: 100%; /* botones al 100% del contenedor */
+  text-align: center;
+  padding: 0.8rem 0; /* vertical cómodo */
+}
+
+/* TABLA*/
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px;
+  font-family: Arial, sans-serif;
+}
+
+th, td {
+  padding: 12px 16px;
+  text-align: left;
+  white-space: nowrap;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #f0f8ff; /* celeste muy clarito */
+}
+
+tbody tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+/* BOTÓN BUSQUEDA JORNADA*/
+#form-busqueda {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center; /* esto centra verticalmente */
+  gap: 6px;
+  max-width: 320px;
+  margin-left: auto;
+  margin-bottom: 20px;
+}
+
+#busqueda-nombre {
+  flex: 1 1 auto;
+  max-width: 250px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  height: 36px;
+  box-sizing: border-box;
+  text-align: left;
+}
+
+#form-busqueda button.btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.3s ease;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* sin top ni position */
+}
+
+#form-busqueda button.btn svg {
+  position: relative;
+  bottom: 10px; 
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+#form-busqueda button.btn:hover {
+  color: #007bff;
+}
+
+/* CENTRADO Y ESTILOS ESPECÍFICOS PARA JORNADAS */
+.jornadas-container {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+  width: 100%;
+  margin: 2rem auto; /* margen arriba y abajo para separar */
+}
+
+/* Contenedor padre para centrar vertical y horizontal */
+.jornadas-wrapper {
+  min-height: calc(100vh - 4rem); /* altura total menos padding top/bottom del body */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start; /* para que no quede absolutamente centrado verticalmente */
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  background: #f4f4f9;
+}
+
+
 
 /* FOOTER */
 .footer {
@@ -160,4 +311,3 @@ a:hover {
   box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
   z-index: 100;
 }
-
