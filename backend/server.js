@@ -38,7 +38,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Archivos estáticos (CSS, JS, imágenes)
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Rutas API (ya existentes)
 const fichajeRoutes = require('./routes/fichajeRouter');
