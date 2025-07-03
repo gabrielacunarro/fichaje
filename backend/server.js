@@ -30,7 +30,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: { 
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    secure: false } // cambiar a true si usas HTTPS!!!!!!!!!!!!!!!!
+    secure: true } // cambiar a true si usas HTTPS!!!!!!!!!!!!!!!!
 }));
 
 // Configuración EJS

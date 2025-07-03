@@ -23,7 +23,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
       if (admins.includes(email.toLowerCase())) {
         window.location.href = '/dashboard';  // Admin va al dashboard
       } else {
-        window.location.href = '/index.html'; // Usuario normal va al fichaje
+        window.location.href = '/index'; // Usuario normal va al fichaje
       }
 
     } else {
