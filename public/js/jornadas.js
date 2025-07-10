@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
       data.jornadas.forEach((j) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${j.nombreEmpleado || j.usuarioId || "N/A"}</td>
+          <td>${j.nombreEmpleado || "N/A"}</td>
           <td>${new Date(j.fecha).toLocaleString()}</td>
           <td>${j.checkOut ? new Date(j.checkOut).toLocaleString() : "-"}</td>
           <td>${j.horasTrabajadas ? j.horasTrabajadas.toFixed(2) : "-"}</td>

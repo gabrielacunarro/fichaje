@@ -168,17 +168,14 @@ exports.listarJornadas = async (req, res) => {
 
     if (nombre) {
       usuariosFiltrados = await Usuario.find({
-        $or: [
-          { nombre: { $regex: nombre, $options: "i" } },
-        ],
+        $or: [{ nombre: { $regex: nombre, $options: "i" } }],
       }).lean();
     } else {
       usuariosFiltrados = await Usuario.find().lean();
     }
 
-    const emailsUsuarios = usuariosFiltrados.map((u) => u.email);
-
-    const filtro = nombre ? { usuarioId: { $in: emailsUsuarios } } : {};
+    const idsUsuarios = usuariosFiltrados.map((u) => u._id.toString());
+    const filtro = nombre ? { usuarioId: { $in: idsUsuarios } } : {};
 
     const total = await Jornada.countDocuments(filtro);
 
@@ -188,14 +185,14 @@ exports.listarJornadas = async (req, res) => {
       .limit(limit)
       .lean();
 
-    const mapaEmails = {};
+    const mapaIds = {};
     usuariosFiltrados.forEach((u) => {
-      mapaEmails[u.email] = u.nombre || u.email;
+      mapaIds[u._id.toString()] = u.nombre;
     });
 
     const jornadasConNombre = jornadas.map((j) => ({
       ...j,
-      nombreEmpleado: mapaEmails[j.usuarioId] || j.usuarioId,
+      nombreEmpleado: mapaIds[j.usuarioId] || j.usuarioId,
     }));
 
     res.json({
@@ -209,7 +206,6 @@ exports.listarJornadas = async (req, res) => {
     res.status(500).json({ message: "Error al obtener jornadas" });
   }
 };
-
 
 exports.listarFichajes = async (req, res) => {
   try {
