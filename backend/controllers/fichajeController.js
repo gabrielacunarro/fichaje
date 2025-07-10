@@ -3,7 +3,7 @@ const Ubicacion = require("../models/Ubicacion");
 const Jornada = require("../models/Jornada");
 const Usuario = require("../models/Usuario");
 
-// Calcula la distancia en metros entre dos coordenadas GPS
+// 🔵 Calcula la distancia en metros entre dos coordenadas GPS
 const calcularDistancia = (lat1, lon1, lat2, lon2) => {
   const toRad = (x) => (x * Math.PI) / 180;
   const R = 6371000; // Radio de la Tierra en metros
@@ -19,7 +19,7 @@ const calcularDistancia = (lat1, lon1, lat2, lon2) => {
   return R * c;
 };
 
-// Devuelve la ubicación válida encontrada (incluye nombre)
+// 🔵 Busca ubicación válida
 const obtenerUbicacionValida = async (lat, lng) => {
   const ubicaciones = await Ubicacion.find();
   const umbralMetros = 150;
@@ -33,31 +33,24 @@ const obtenerUbicacionValida = async (lat, lng) => {
   return null;
 };
 
+// 🔵 Registro Check In / Check Out
 exports.fichar = async (req, res) => {
   try {
-    // Obtenemos usuarioId del token validado
-    const usuarioId = req.user._id.toString();
+    const usuarioId = req.user._id; // 🚨 SIN toString()
 
-    // El resto de datos vienen del body
     const { tipo, lat, lng } = req.body;
 
-    // Validar que lat y lng sean números válidos
     const latNum = Number(lat);
     const lngNum = Number(lng);
 
     if (isNaN(latNum) || isNaN(lngNum)) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Ubicación inválida" });
+      return res.status(400).json({ success: false, message: "Ubicación inválida" });
     }
 
-    // Validación de ubicación válida
     const ubicacion = await obtenerUbicacionValida(latNum, lngNum);
 
     if (!ubicacion) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Ubicación inválida" });
+      return res.status(400).json({ success: false, message: "Ubicación inválida" });
     }
 
     const ubicacionConNombre = {
@@ -66,10 +59,7 @@ exports.fichar = async (req, res) => {
       lng: ubicacion.lng,
     };
 
-    // Buscamos último fichaje para el usuario
-    const ultimoFichaje = await Fichaje.findOne({ usuarioId }).sort({
-      createdAt: -1,
-    });
+    const ultimoFichaje = await Fichaje.findOne({ usuarioId }).sort({ createdAt: -1 });
 
     if (tipo === "checkin") {
       if (ultimoFichaje && ultimoFichaje.tipo === "checkin") {
@@ -105,8 +95,7 @@ exports.fichar = async (req, res) => {
         lngNum
       );
 
-      const umbralCheck = 100;
-      if (distanciaCheck > umbralCheck) {
+      if (distanciaCheck > 100) {
         return res.status(400).json({
           success: false,
           message: "Check Out en ubicación distinta al Check In",
@@ -156,37 +145,39 @@ exports.fichar = async (req, res) => {
   }
 };
 
-// Jornadas
-
+// 🔵 Listar jornadas laborales
 exports.listarJornadas = async (req, res) => {
   try {
     const nombre = req.query.nombre || "";
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 15;
 
-    // Buscar jornadas con populate de usuarioId, y filtrando por nombre si viene
-    const filtroUsuario = nombre
-      ? { 'usuarioId.nombre': { $regex: nombre, $options: "i" } }
-      : {};
+    let filtro = {};
+    if (nombre) {
+      const usuarios = await Usuario.find({
+        nombre: { $regex: nombre, $options: "i" },
+      }).select("_id").lean();
 
-    const total = await Jornada.countDocuments(filtroUsuario);
+      const ids = usuarios.map((u) => u._id);
+      filtro = { usuarioId: { $in: ids } };
+    }
 
-    const jornadas = await Jornada.find()
-      .populate({
-        path: 'usuarioId',
-        select: 'nombre',
-        match: nombre ? { nombre: { $regex: nombre, $options: "i" } } : {},
-      })
+    const total = await Jornada.countDocuments(filtro);
+
+    const jornadas = await Jornada.find(filtro)
+      .populate("usuarioId", "nombre")
       .sort({ fecha: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .lean();
 
-    // Filtrar jornadas donde populate no encontró usuario (por el match)
-    const jornadasFiltradas = jornadas.filter(j => j.usuarioId != null);
+    const jornadasConNombre = jornadas.map((j) => ({
+      ...j,
+      nombreEmpleado: j.usuarioId?.nombre || "N/A",
+    }));
 
     res.json({
-      jornadas: jornadasFiltradas,
+      jornadas: jornadasConNombre,
       page,
       pages: Math.ceil(total / limit),
       total,
@@ -197,23 +188,21 @@ exports.listarJornadas = async (req, res) => {
   }
 };
 
-
+// 🔵 Listar fichajes
 exports.listarFichajes = async (req, res) => {
   try {
     const usuarioId = req.query.usuarioId;
     const filtro = usuarioId ? { usuarioId } : {};
 
-    // Usamos populate para traer el nombre del usuario en el fichaje
     const fichajes = await Fichaje.find(filtro)
-      .populate('usuarioId', 'nombre email') // trae solo nombre y email
+      .populate("usuarioId", "nombre email")
       .sort({ createdAt: -1 })
       .lean();
 
-    // Opcional: mapear para que en el JSON salga un campo nombreUsuario por ejemplo
-    const fichajesConNombre = fichajes.map(f => ({
+    const fichajesConNombre = fichajes.map((f) => ({
       ...f,
-      nombreUsuario: f.usuarioId?.nombre || 'Desconocido',
-      emailUsuario: f.usuarioId?.email || ''
+      nombreUsuario: f.usuarioId?.nombre || "Desconocido",
+      emailUsuario: f.usuarioId?.email || "",
     }));
 
     res.json(fichajesConNombre);
@@ -222,4 +211,3 @@ exports.listarFichajes = async (req, res) => {
     res.status(500).json({ message: "Error al obtener fichajes" });
   }
 };
-
