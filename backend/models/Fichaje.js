@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 
 const fichajeSchema = new mongoose.Schema({
-  usuarioId: { type: String, required: true },
+  usuarioId: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "Usuario", 
+    required: true 
+  },
   tipo: { type: String, enum: ['checkin', 'checkout'], required: true },
   ubicacion: {
     nombre: { type: String },
@@ -10,7 +14,6 @@ const fichajeSchema = new mongoose.Schema({
   },
   horasTrabajadas: Number,
 }, { timestamps: true });
-
 
 module.exports = mongoose.model('Fichaje', fichajeSchema);
 

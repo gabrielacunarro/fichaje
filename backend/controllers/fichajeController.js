@@ -164,39 +164,29 @@ exports.listarJornadas = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 15;
 
-    let usuariosFiltrados = [];
+    // Buscar jornadas con populate de usuarioId, y filtrando por nombre si viene
+    const filtroUsuario = nombre
+      ? { 'usuarioId.nombre': { $regex: nombre, $options: "i" } }
+      : {};
 
-    if (nombre) {
-      usuariosFiltrados = await Usuario.find({
-        $or: [{ nombre: { $regex: nombre, $options: "i" } }],
-      }).lean();
-    } else {
-      usuariosFiltrados = await Usuario.find().lean();
-    }
+    const total = await Jornada.countDocuments(filtroUsuario);
 
-    const idsUsuarios = usuariosFiltrados.map((u) => u._id.toString());
-    const filtro = nombre ? { usuarioId: { $in: idsUsuarios } } : {};
-
-    const total = await Jornada.countDocuments(filtro);
-
-    const jornadas = await Jornada.find(filtro)
+    const jornadas = await Jornada.find()
+      .populate({
+        path: 'usuarioId',
+        select: 'nombre',
+        match: nombre ? { nombre: { $regex: nombre, $options: "i" } } : {},
+      })
       .sort({ fecha: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .lean();
 
-    const mapaIds = {};
-    usuariosFiltrados.forEach((u) => {
-      mapaIds[u._id.toString()] = u.nombre;
-    });
-
-    const jornadasConNombre = jornadas.map((j) => ({
-      ...j,
-      nombreEmpleado: mapaIds[j.usuarioId] || j.usuarioId,
-    }));
+    // Filtrar jornadas donde populate no encontró usuario (por el match)
+    const jornadasFiltradas = jornadas.filter(j => j.usuarioId != null);
 
     res.json({
-      jornadas: jornadasConNombre,
+      jornadas: jornadasFiltradas,
       page,
       pages: Math.ceil(total / limit),
       total,
@@ -207,14 +197,29 @@ exports.listarJornadas = async (req, res) => {
   }
 };
 
+
 exports.listarFichajes = async (req, res) => {
   try {
     const usuarioId = req.query.usuarioId;
     const filtro = usuarioId ? { usuarioId } : {};
-    const fichajes = await Fichaje.find(filtro).sort({ createdAt: -1 });
-    res.json(fichajes);
+
+    // Usamos populate para traer el nombre del usuario en el fichaje
+    const fichajes = await Fichaje.find(filtro)
+      .populate('usuarioId', 'nombre email') // trae solo nombre y email
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Opcional: mapear para que en el JSON salga un campo nombreUsuario por ejemplo
+    const fichajesConNombre = fichajes.map(f => ({
+      ...f,
+      nombreUsuario: f.usuarioId?.nombre || 'Desconocido',
+      emailUsuario: f.usuarioId?.email || ''
+    }));
+
+    res.json(fichajesConNombre);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al obtener fichajes" });
   }
 };
+
