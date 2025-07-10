@@ -24,7 +24,7 @@
         <label for="password">Contraseña:</label>
         <div class="input-con-ojo">
           <input type="password" id="password" name="password" required />
-          <span class="ojo" id="togglePassword">👁️</span>
+          <span class="ojo" id="togglePassword"><i class="fa fa-eye"></i></span>
         </div>
 
         <label for="confirm-password">Confirmar Contraseña:</label>
@@ -35,12 +35,12 @@
             name="confirm-password"
             required
           />
-          <span class="ojo" id="toggleConfirmPassword">👁️</span>
+          <span class="ojo" id="toggleConfirmPassword"><i class="fa fa-eye"></i></span>
         </div>
 
         <button type="submit">Registrarse</button>
       </form>
-      <p id="mensaje"><%= mensajeError || '' %></p>
+      <p id="mensaje"></p>
     </div>
 
     <script type="module" src="/js/registro.js"></script>

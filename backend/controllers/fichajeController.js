@@ -22,19 +22,37 @@ const calcularDistancia = (lat1, lon1, lat2, lon2) => {
 // Devuelve la ubicación válida encontrada (incluye nombre)
 const obtenerUbicacionValida = async (lat, lng) => {
   const ubicaciones = await Ubicacion.find();
-  const umbralMetros = 150; // Subí de ~100m a 150m para más tolerancia GPS
+  const umbralMetros = 150;
 
-  return ubicaciones.find((u) => {
+  for (const u of ubicaciones) {
     const distancia = calcularDistancia(u.lat, u.lng, lat, lng);
-    return distancia <= umbralMetros;
-  });
+    if (distancia <= umbralMetros) {
+      return u;
+    }
+  }
+  return null;
 };
 
 exports.fichar = async (req, res) => {
   try {
-    const { usuarioId, tipo, lat, lng } = req.body;
+    // Obtenemos usuarioId del token validado
+    const usuarioId = req.user._id.toString();
 
-    const ubicacion = await obtenerUbicacionValida(lat, lng);
+    // El resto de datos vienen del body
+    const { tipo, lat, lng } = req.body;
+
+    // Validar que lat y lng sean números válidos
+    const latNum = Number(lat);
+    const lngNum = Number(lng);
+
+    if (isNaN(latNum) || isNaN(lngNum)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Ubicación inválida" });
+    }
+
+    // Validación de ubicación válida
+    const ubicacion = await obtenerUbicacionValida(latNum, lngNum);
 
     if (!ubicacion) {
       return res
@@ -48,6 +66,7 @@ exports.fichar = async (req, res) => {
       lng: ubicacion.lng,
     };
 
+    // Buscamos último fichaje para el usuario
     const ultimoFichaje = await Fichaje.findOne({ usuarioId }).sort({
       createdAt: -1,
     });
@@ -82,11 +101,11 @@ exports.fichar = async (req, res) => {
       const distanciaCheck = calcularDistancia(
         ultimoFichaje.ubicacion.lat,
         ultimoFichaje.ubicacion.lng,
-        lat,
-        lng
+        latNum,
+        lngNum
       );
 
-      const umbralCheck = 100; // Subí de 50m a 100m para tolerancia indoor
+      const umbralCheck = 100;
       if (distanciaCheck > umbralCheck) {
         return res.status(400).json({
           success: false,
@@ -138,16 +157,19 @@ exports.fichar = async (req, res) => {
 };
 
 // Jornadas
+
 exports.listarJornadas = async (req, res) => {
   try {
     const nombre = req.query.nombre || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+
     let usuariosFiltrados = [];
 
     if (nombre) {
       usuariosFiltrados = await Usuario.find({
         $or: [
           { nombre: { $regex: nombre, $options: "i" } },
-          { nombreCompleto: { $regex: nombre, $options: "i" } },
         ],
       }).lean();
     } else {
@@ -158,11 +180,17 @@ exports.listarJornadas = async (req, res) => {
 
     const filtro = nombre ? { usuarioId: { $in: emailsUsuarios } } : {};
 
-    const jornadas = await Jornada.find(filtro).sort({ fecha: -1 }).lean();
+    const total = await Jornada.countDocuments(filtro);
+
+    const jornadas = await Jornada.find(filtro)
+      .sort({ fecha: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .lean();
 
     const mapaEmails = {};
     usuariosFiltrados.forEach((u) => {
-      mapaEmails[u.email] = u.nombreCompleto || u.nombre || u.email;
+      mapaEmails[u.email] = u.nombre || u.email;
     });
 
     const jornadasConNombre = jornadas.map((j) => ({
@@ -170,12 +198,18 @@ exports.listarJornadas = async (req, res) => {
       nombreEmpleado: mapaEmails[j.usuarioId] || j.usuarioId,
     }));
 
-    res.json(jornadasConNombre);
+    res.json({
+      jornadas: jornadasConNombre,
+      page,
+      pages: Math.ceil(total / limit),
+      total,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Error al obtener jornadas" });
   }
 };
+
 
 exports.listarFichajes = async (req, res) => {
   try {

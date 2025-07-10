@@ -213,6 +213,25 @@ th, td {
   border-radius: 4px;
 }
 
+.jornadas-container {
+  overflow-x: auto;
+}
+
+
+#tabla-jornadas {
+  table-layout: fixed; /* ancho fijo para columnas */
+  width: 100%;
+  overflow-wrap: break-word; /* que el texto pueda hacer wrap */
+}
+
+#tabla-jornadas th,
+#tabla-jornadas td {
+  max-width: 180px; /* evita que columnas crezcan demasiado */
+  white-space: normal; /* para permitir salto de línea dentro de las celdas */
+  overflow-wrap: break-word;
+}
+
+
 tbody tr:nth-child(odd) {
   background-color: #f0f8ff; /* celeste muy clarito */
 }
@@ -281,20 +300,61 @@ tbody tr:nth-child(even) {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   max-width: 900px;
   width: 100%;
-  margin: 2rem auto; /* margen arriba y abajo para separar */
+  margin: 2rem auto; 
 }
 
 /* Contenedor padre para centrar vertical y horizontal */
 .jornadas-wrapper {
-  min-height: calc(100vh - 4rem); /* altura total menos padding top/bottom del body */
+  min-height: calc(100vh - 4rem); 
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* para que no quede absolutamente centrado verticalmente */
+  align-items: flex-start; 
   padding-top: 2rem;
   padding-bottom: 2rem;
   background: #f4f4f9;
 }
 
+/* Contenedor paginación: centrado horizontal y horizontal */
+.pagination {
+  display: inline-flex;
+  gap: 6px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 15px;
+  user-select: none;
+  width: 100%;
+}
+
+.pagination button {
+  box-sizing: border-box;
+  min-width: 70px;
+  padding: 6px 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 4px;
+  border: 1px solid #007bff;
+  background-color: white;
+  color: #007bff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination button.num-btn {
+  min-width: 32px;
+  padding: 5px 8px;
+}
+
+.pagination button:hover:not(:disabled) {
+  background-color: #007bff;
+  color: white;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
 
 
 /* FOOTER */

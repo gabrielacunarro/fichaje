@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+  <body class="dashboard-page">
+    <div class="dashboard">
+      <div class="container">
+        <h1>
+          Bienvenido/a!<br />
+          <span id="userName" >Cargando...</span>
+        </h1>
+
+        <p>Elige una opción:</p>
+        <div class="btn-group">
+          <a href="/jornadas.html" class="btn">Ingreso a jornada</a>
+          <a href="/index.html" class="btn">Ir a Check-in / Check-out</a>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <p>© 2025 Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+      // Función para decodificar payload de JWT (sin validar la firma, solo para mostrar info)
+      function parseJwt(token) {
+        try {
+          const base64Url = token.split(".")[1];
+          const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+          const jsonPayload = decodeURIComponent(
+            atob(base64)
+              .split("")
+              .map(function (c) {
+                return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+              })
+              .join("")
+          );
+          return JSON.parse(jsonPayload);
+        } catch (e) {
+          return null;
+        }
+      }
+
+      const token = localStorage.getItem("token"); // o sessionStorage si usas ahí
+      const userNameSpan = document.getElementById("userName");
+
+      if (token) {
+        const decoded = parseJwt(token);
+        if (decoded && decoded.nombre) {
+          userNameSpan.textContent = decoded.nombre;
+        } else if (decoded && decoded.email) {
+          userNameSpan.textContent = decoded.email;
+        } else {
+          userNameSpan.textContent = "Usuario";
+        }
+      } else {
+        // Si no hay token, redirigir a login
+        window.location.href = "/login.html"; // Opcional: redirigir si no está logueado
+      }
+    </script>
+  </body>
+</html>

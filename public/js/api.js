@@ -1,7 +1,7 @@
 const API_BASE = '/api';
 
 export async function enviarFichaje(tipo, coords, token, usuarioId) {
-  const res = await fetch(`${API_BASE}/fichaje`, {
+  const res = await fetch(`${API_BASE}/fichajes`, {
     method: 'POST',
     headers: { 
       'Content-Type': 'application/json',

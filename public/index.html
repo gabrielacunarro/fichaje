@@ -31,7 +31,7 @@
         mensaje.textContent = "Debes iniciar sesión primero...redirigiendo";
         mensaje.style.color = "red";
         setTimeout(() => {
-          window.location.href = "/login"; // Ruta para login con EJS
+          window.location.href = "/login.html"; // Ruta para login con EJS
         }, 4000);
       }
 
@@ -63,7 +63,7 @@
               const lng = pos.coords.longitude;
 
               try {
-                const res = await fetch("/api/fichaje", {
+                const res = await fetch("/api/fichajes", {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/styles.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>Iniciar Sesión</h1>
+      <form id="login-form" novalidate>
+        <label for="email">Email:</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Ingrese su email"
+          required
+          autocomplete="username"
+        />
+
+        <label for="password">Contraseña:</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          placeholder="Ingrese su contraseña"
+          required
+          autocomplete="current-password"
+        />
+
+        <button type="submit" id="btn-submit">Iniciar sesión</button>
+      </form>
+
+      <div
+        id="mensaje"
+        style="margin-top: 10px; min-height: 1.2em;"
+        aria-live="polite"
+      ></div>
+
+      <div class="links" style="margin-top: 20px;">
+        <p>
+          ¿No tienes cuenta?
+          <a href="/registro.html">Regístrate aquí</a>
+        </p>
+        <p>
+          <a href="/forgot.html">¿Olvidaste tu contraseña?</a>
+        </p>
+      </div>
+    </div>
+
+<script>
+  const form = document.getElementById("login-form");
+  const mensaje = document.getElementById("mensaje");
+  const btnSubmit = document.getElementById("btn-submit");
+
+  function validarEmail(email) {
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    mensaje.textContent = "";
+    mensaje.style.color = "black";
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!validarEmail(email)) {
+      mensaje.textContent = "Por favor, ingrese un email válido.";
+      mensaje.style.color = "red";
+      return;
+    }
+    if (!password) {
+      mensaje.textContent = "Por favor, ingrese su contraseña.";
+      mensaje.style.color = "red";
+      return;
+    }
+
+    btnSubmit.disabled = true;
+
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("email", email);
+
+        // Decodificar payload del JWT para obtener el role
+        const payload = JSON.parse(atob(data.token.split('.')[1]));
+        const role = payload.role || "user";
+
+        if (role === "admin") {
+          window.location.href = "/dashboard.html";
+        } else {
+          window.location.href = "/index.html";
+        }
+      } else {
+        mensaje.textContent = data.message || "Error al iniciar sesión";
+        mensaje.style.color = "red";
+        btnSubmit.disabled = false;
+      }
+    } catch (error) {
+      mensaje.textContent = "Error de conexión al servidor";
+      mensaje.style.color = "red";
+      btnSubmit.disabled = false;
+    }
+  });
+</script>
+
+
+    <footer class="footer" style="margin-top: 40px; text-align: center;">
+      <p>© 2025 Todos los derechos reservados.</p>
+    </footer>
+  </body>
+</html>

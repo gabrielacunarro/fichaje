@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Ubicacion = require('../models/Ubicacion');
+const { validarToken } = require('../middlewares/authMiddleware.js');
+const protegerAdmin = require('../middlewares/adminMiddleware.js');
 
 // POST /api/ubicaciones
-router.post('/', async (req, res) => {
+router.post('/', validarToken , protegerAdmin ,async (req, res) => {
   const { nombre, lat, lng } = req.body;
 
   if (!nombre || lat === undefined || lng === undefined) {

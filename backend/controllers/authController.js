@@ -18,16 +18,19 @@ exports.login = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Usuario o contraseña incorrectas.' });
     }
 
-    // Guardar datos en sesión para uso en rutas protegidas
-    req.session.user = {
-      id: usuario._id,
-      email: usuario.email,
-      nombre: usuario.nombre,
-    };
+    // Crear token JWT con id, email y rol
+    const token = jwt.sign(
+      {
+        id: usuario._id,
+        email: usuario.email,
+        nombre: usuario.nombre,
+        role: usuario.role || 'user'
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: '30d' }
+    );
 
-    // Crear token JWT (si usas token también)
-    const token = jwt.sign({ id: usuario._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
-
+    // Respondemos con token y success para el front
     res.json({ success: true, token });
   } catch (err) {
     console.error(err);
@@ -67,7 +70,7 @@ exports.recuperarPassword = async (req, res) => {
       subject: 'Recuperación de contraseña',
       text: `Recibiste este correo porque solicitaste restablecer tu contraseña.\n\n` +
             `Ingresa al siguiente enlace para continuar:\n\n` +
-            `http://fichaje-lnui.onrender.com/reset?token=${token}\n\n` +
+            `https://fichaje-lnui.onrender.com/reset?token=${token}\n\n` +
             `Si no solicitaste esto, ignora este correo.\n`
     };
 

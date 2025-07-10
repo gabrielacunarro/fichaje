@@ -14,7 +14,7 @@ const validarToken = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const usuario = await Usuario.findById(decoded.id);
     if (!usuario) 
-      return res.status(401).json({ success: false, message: 'Usuario no encontrado.' });
+      return res.status(401).json({ success: false, message: 'Datos inválidos, reintente.' });
 
     req.user = usuario;  // Aquí es crucial para que protegerAdmin funcione
     next();
