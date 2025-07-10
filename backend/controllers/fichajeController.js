@@ -71,13 +71,6 @@ exports.fichar = async (req, res) => {
 
       await Fichaje.create({ usuarioId, tipo, ubicacion: ubicacionConNombre });
 
-      await Jornada.create({
-        usuarioId,
-        fecha: new Date(),
-        horasTrabajadas: 0,
-        ubicacion: ubicacionConNombre,
-      });
-
       return res.json({ success: true, message: "Check In registrado" });
     }
 
@@ -105,6 +98,7 @@ exports.fichar = async (req, res) => {
       const horas =
         (Date.now() - new Date(ultimoFichaje.createdAt)) / 1000 / 60 / 60;
 
+      // ✅ Registrar el Fichaje de Check Out
       await Fichaje.create({
         usuarioId,
         tipo,
@@ -112,28 +106,18 @@ exports.fichar = async (req, res) => {
         horasTrabajadas: horas,
       });
 
-      const jornadaAbierta = await Jornada.findOne({
+      // ✅ Crear Jornada completa SOLO aquí
+      await Jornada.create({
         usuarioId,
-        checkOut: null,
+        fecha: new Date(ultimoFichaje.createdAt), // fecha de entrada
+        checkOut: new Date(), // fecha de salida actual
+        horasTrabajadas: horas,
+        ubicacion: ubicacionConNombre,
       });
-
-      if (jornadaAbierta) {
-        jornadaAbierta.checkOut = new Date();
-        jornadaAbierta.horasTrabajadas = horas;
-        await jornadaAbierta.save();
-      } else {
-        await Jornada.create({
-          usuarioId,
-          fecha: new Date(ultimoFichaje.createdAt),
-          checkOut: new Date(),
-          horasTrabajadas: horas,
-          ubicacion: ubicacionConNombre,
-        });
-      }
 
       return res.json({
         success: true,
-        message: "Check Out registrado y jornada guardada",
+        message: "Check Out registrado y jornada creada",
         horas,
       });
     }
@@ -144,6 +128,7 @@ exports.fichar = async (req, res) => {
     res.status(500).json({ success: false, message: "Error del servidor" });
   }
 };
+
 
 // 🔵 Listar jornadas laborales
 exports.listarJornadas = async (req, res) => {
