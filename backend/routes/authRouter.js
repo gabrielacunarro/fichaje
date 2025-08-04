@@ -7,8 +7,9 @@ router.post('/login', login);
 router.post('/reset', recuperarPassword);
 router.post('/reset/:token', resetPassword);
 router.post('/forgot', recuperarPassword);
+
 router.get('/reset', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/reset-password.html'));
+  res.sendFile(path.join(__dirname, '..', 'public', 'reset.html'));
 });
 
 module.exports = router;
